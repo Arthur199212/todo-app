@@ -1,1 +1,5 @@
 port: 7000
+
+db:
+  host: localhost
+  sslmode: disable
