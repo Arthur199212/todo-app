@@ -17,8 +17,6 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 }
 
 func (s *AuthService) CreateUser(user todo.User) (int, error) {
-	// todo: validation
-
 	passwordHash, err := s.generatePasswordHash(user.Password)
 	if err != nil {
 		return 0, err
