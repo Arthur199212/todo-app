@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"todo-app"
 	"todo-app/pkg/handler"
 	"todo-app/pkg/repository"
@@ -35,7 +39,7 @@ func main() {
 		Password: os.Getenv("POSTGRES_PASSWORD"),
 	})
 	if err != nil {
-		logrus.Fatalf("Error while trying to connect to DB: %s", err.Error())
+		logrus.Fatalf("error while trying to connect to DB: %s", err.Error())
 	}
 
 	repos := repository.NewRepository(db)
@@ -43,7 +47,28 @@ func main() {
 	handlers := handler.NewHandler(services)
 
 	srv := new(todo.Server)
-	srv.Run(viper.GetString("port"), handlers.InitRoutes())
+
+	go func() {
+		err := srv.Run(viper.GetString("port"), handlers.InitRoutes())
+		if err != nil && err != http.ErrServerClosed {
+			logrus.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	logrus.Println("server is shutting down ...")
+
+	if err := srv.Shutdown(context.Background()); err != nil {
+		logrus.Fatalf("error occured on server shut down: %s", err.Error())
+	}
+
+	if err := db.Close(); err != nil {
+		logrus.Fatalf("error occured on DB connection close: %s", err.Error())
+	}
+
+	logrus.Println("server shut down")
 }
 
 func initConfig() error {
