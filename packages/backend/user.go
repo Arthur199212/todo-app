@@ -9,8 +9,8 @@ import (
 
 type User struct {
 	Id       string `json:"-" db:"id"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" db:"email"`
+	Password string `json:"password" db:"password_hash"`
 }
 
 func (u User) Validate() error {

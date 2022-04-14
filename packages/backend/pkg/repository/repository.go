@@ -14,7 +14,7 @@ const (
 
 type Authorization interface {
 	CreateUser(user todo.User) (int, error)
-	GetUser()
+	GetUserByEmail(email string) (todo.User, error)
 }
 
 type Repository struct {
