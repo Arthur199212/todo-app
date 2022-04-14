@@ -8,6 +8,7 @@ import (
 type Authorization interface {
 	CreateUser(input todo.User) (int, error)
 	GenerateToken(email, password string) (string, error)
+	ParseUserIdFromToken(token string) (int, error)
 }
 
 type Service struct {

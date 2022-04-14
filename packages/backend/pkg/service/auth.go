@@ -1,7 +1,9 @@
 package service
 
 import (
+	"errors"
 	"os"
+	"strconv"
 	"time"
 	"todo-app"
 	"todo-app/pkg/repository"
@@ -66,4 +68,21 @@ func (s *AuthService) generateAccessToken(userId string) (string, error) {
 	},
 	)
 	return token.SignedString([]byte(os.Getenv("ACCESS_TOKEN_SECRET")))
+}
+
+func (s *AuthService) ParseUserIdFromToken(tokenStr string) (int, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid jwt token signing method")
+		}
+		return []byte(os.Getenv("ACCESS_TOKEN_SECRET")), nil
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	if claims, ok := token.Claims.(*jwt.StandardClaims); ok && token.Valid {
+		return strconv.Atoi(claims.Subject)
+	}
+	return 0, errors.New("token is invalid")
 }
