@@ -8,7 +8,20 @@ import (
 )
 
 func (h *Handler) getAllLists(c *gin.Context) {
-	// todo
+	userId, err := parseUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	// todo: pagination
+
+	todoLists, err := h.services.TodoList.GetAll(userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, todoLists)
 }
 
 func (h *Handler) createList(c *gin.Context) {
@@ -32,7 +45,7 @@ func (h *Handler) createList(c *gin.Context) {
 
 	listId, err := h.services.TodoList.Create(userId, input)
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 

@@ -23,3 +23,10 @@ func (r *TodoListPostgres) Create(userId int, todoList todo.CreateListInput) (in
 	err := row.Scan(&id)
 	return id, err
 }
+
+func (r *TodoListPostgres) GetAll(userId int) ([]todo.TodoList, error) {
+	var todoLists []todo.TodoList
+	query := fmt.Sprintf("select * from %s where user_id=$1", todoListTable)
+	err := r.db.Select(&todoLists, query, userId)
+	return todoLists, err
+}

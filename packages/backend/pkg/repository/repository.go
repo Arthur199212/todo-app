@@ -20,6 +20,7 @@ type Authorization interface {
 
 type TodoList interface {
 	Create(userId int, todoList todo.CreateListInput) (int, error)
+	GetAll(userId int) ([]todo.TodoList, error)
 }
 
 type Repository struct {
