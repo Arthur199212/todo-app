@@ -49,7 +49,7 @@ func (s *AuthService) GenerateToken(email, password string) (string, error) {
 		return "", err
 	}
 
-	token, err := s.generateAccessToken(user.Id)
+	token, err := s.generateAccessToken(strconv.Itoa(user.Id))
 	return token, err
 }
 

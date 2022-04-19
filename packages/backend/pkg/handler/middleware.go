@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -26,4 +27,20 @@ func (h *Handler) authRequired(c *gin.Context) {
 	}
 
 	c.Set(userCtx, userId)
+}
+
+func parseUserId(c *gin.Context) (int, error) {
+	userId, ok := c.Get(userCtx)
+	if !ok {
+		newErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+		return 0, errors.New("userId is invalid")
+	}
+
+	userIdInt, ok := userId.(int)
+	if !ok {
+		newErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+		return 0, errors.New("userId is invalid")
+	}
+
+	return userIdInt, nil
 }

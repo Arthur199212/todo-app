@@ -6,7 +6,7 @@ import (
 	"todo-app"
 
 	"github.com/gin-gonic/gin"
-	v "github.com/go-ozzo/ozzo-validation/v4"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
@@ -39,13 +39,16 @@ type signInInput struct {
 }
 
 func (u signInInput) Validate() error {
-	return v.ValidateStruct(&u,
-		v.Field(&u.Email, v.Required, is.Email),
-		v.Field(&u.Password, v.Required, v.Length(6, 30)),
-		v.Field(&u.Password, v.Required, v.Match(regexp.MustCompile("[A-Z]{1}")).Error("should have at least 1 upper case letter")),
-		v.Field(&u.Password, v.Required, v.Match(regexp.MustCompile("[0-9]{1}")).Error("should have at least 1 number")),
-		v.Field(&u.Password, v.Required, v.Match(regexp.MustCompile("[#?!@$%^&*-]{1}")).Error("should have at least 1 special character")),
-	)
+	return validation.ValidateStruct(&u,
+		validation.Field(&u.Email, validation.Required, is.Email),
+		validation.Field(
+			&u.Password,
+			validation.Required,
+			validation.Length(6, 30),
+			validation.Match(regexp.MustCompile("[A-Z]{1}")).Error("should have at least 1 upper case letter"),
+			validation.Match(regexp.MustCompile("[0-9]{1}")).Error("should have at least 1 number"),
+			validation.Match(regexp.MustCompile("[#?!@$%^&*-]{1}")).Error("should have at least 1 special character"),
+		))
 }
 
 func (h *Handler) signIn(c *gin.Context) {
