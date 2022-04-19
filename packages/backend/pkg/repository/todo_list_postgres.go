@@ -30,3 +30,10 @@ func (r *TodoListPostgres) GetAll(userId int) ([]todo.TodoList, error) {
 	err := r.db.Select(&todoLists, query, userId)
 	return todoLists, err
 }
+
+func (r *TodoListPostgres) GetById(userId, id int) (todo.TodoList, error) {
+	var todoList todo.TodoList
+	query := fmt.Sprintf("select * from %s where user_id=$1 and id=$2", todoListTable)
+	err := r.db.Get(&todoList, query, userId, id)
+	return todoList, err
+}

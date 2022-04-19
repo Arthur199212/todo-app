@@ -14,6 +14,7 @@ type Authorization interface {
 type TodoList interface {
 	Create(userId int, todoList todo.CreateListInput) (int, error)
 	GetAll(userId int) ([]todo.TodoList, error)
+	GetById(userId, id int) (todo.TodoList, error)
 }
 
 type Service struct {
