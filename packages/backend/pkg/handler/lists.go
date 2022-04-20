@@ -6,10 +6,11 @@ import (
 	"todo-app"
 
 	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 func (h *Handler) getAllLists(c *gin.Context) {
-	userId, err := parseUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -25,26 +26,35 @@ func (h *Handler) getAllLists(c *gin.Context) {
 	c.JSON(http.StatusOK, todoLists)
 }
 
+type todoListInput struct {
+	Title string `json:"title"`
+}
+
+func (input todoListInput) Validate() error {
+	return validation.ValidateStruct(&input,
+		validation.Field(&input.Title, validation.Required, validation.Length(3, 50)),
+	)
+}
+
 func (h *Handler) createList(c *gin.Context) {
-	userId, err := parseUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	var input todo.CreateListInput
+	var input todoListInput
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	input.UserId = userId
 
 	if err := input.Validate(); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	listId, err := h.services.TodoList.Create(userId, input)
+	listId, err := h.services.TodoList.Create(userId, input.Title)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -54,7 +64,7 @@ func (h *Handler) createList(c *gin.Context) {
 }
 
 func (h *Handler) getListById(c *gin.Context) {
-	userId, err := parseUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -75,6 +85,56 @@ func (h *Handler) getListById(c *gin.Context) {
 	c.JSON(http.StatusOK, todoList)
 }
 
-func (h *Handler) updateList(c *gin.Context) {}
+func (h *Handler) updateList(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
 
-func (h *Handler) deleteList(c *gin.Context) {}
+	listId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var input todo.UpdateTodoListInput
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	input.Id = listId
+
+	if err := input.Validate(); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.TodoList.Update(userId, input); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{"message": "OK"})
+}
+
+func (h *Handler) deleteList(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.TodoList.Delete(userId, id); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{"message": "OK"})
+}

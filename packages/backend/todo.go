@@ -18,15 +18,15 @@ func (tl TodoList) Validate() error {
 	)
 }
 
-type CreateListInput struct {
-	Title  string `json:"title"`
-	UserId int    `json:"userId"`
+type UpdateTodoListInput struct {
+	Id    int    `json:"id"`
+	Title string `json:"title"`
 }
 
-func (input CreateListInput) Validate() error {
+func (input UpdateTodoListInput) Validate() error {
 	return validation.ValidateStruct(&input,
+		validation.Field(&input.Id, validation.Required, validation.Min(0)),
 		validation.Field(&input.Title, validation.Required, validation.Length(3, 50)),
-		validation.Field(&input.UserId, validation.Required, validation.Min(0)),
 	)
 }
 

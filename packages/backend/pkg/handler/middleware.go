@@ -29,7 +29,7 @@ func (h *Handler) authRequired(c *gin.Context) {
 	c.Set(userCtx, userId)
 }
 
-func parseUserId(c *gin.Context) (int, error) {
+func getUserId(c *gin.Context) (int, error) {
 	userId, ok := c.Get(userCtx)
 	if !ok {
 		return 0, errors.New("userId is invalid")
