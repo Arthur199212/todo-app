@@ -27,3 +27,13 @@ func (s *TodoItemService) Create(userId int, input models.TodoItemInput) (int, e
 
 	return s.repo.Create(userId, input)
 }
+
+func (s *TodoItemService) GetAllByListId(userId, listId int) ([]models.TodoItem, error) {
+	_, err := s.listRepo.GetById(userId, listId)
+	if err != nil {
+		logrus.Error(err)
+		return nil, models.NewRequestError(http.StatusBadRequest, errors.New("list not found"))
+	}
+
+	return s.repo.GetAllByListId(listId)
+}
