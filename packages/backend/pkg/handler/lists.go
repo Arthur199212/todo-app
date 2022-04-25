@@ -12,7 +12,7 @@ import (
 func (h *Handler) getAllLists(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusUnauthorized, err))
 		return
 	}
 
@@ -20,7 +20,7 @@ func (h *Handler) getAllLists(c *gin.Context) {
 
 	todoLists, err := h.services.TodoList.GetAll(userId)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusInternalServerError, err))
 	}
 
 	c.JSON(http.StatusOK, todoLists)
@@ -39,24 +39,24 @@ func (input todoListInput) Validate() error {
 func (h *Handler) createList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusUnauthorized, err))
 		return
 	}
 
 	var input todoListInput
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	listId, err := h.services.TodoList.Create(userId, input.Title)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusInternalServerError, err))
 		return
 	}
 
@@ -66,19 +66,19 @@ func (h *Handler) createList(c *gin.Context) {
 func (h *Handler) getListById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusUnauthorized, err))
 		return
 	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	todoList, err := h.services.TodoList.GetById(userId, id)
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
@@ -88,30 +88,30 @@ func (h *Handler) getListById(c *gin.Context) {
 func (h *Handler) updateList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusUnauthorized, err))
 		return
 	}
 
 	listId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	var input todo.UpdateTodoListInput
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 	input.Id = listId
 
 	if err := input.Validate(); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	if err := h.services.TodoList.Update(userId, input); err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusInternalServerError, err))
 		return
 	}
 
@@ -121,18 +121,18 @@ func (h *Handler) updateList(c *gin.Context) {
 func (h *Handler) deleteList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusUnauthorized, err))
 		return
 	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	if err := h.services.TodoList.Delete(userId, id); err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusInternalServerError, err))
 		return
 	}
 

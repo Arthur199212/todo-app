@@ -13,18 +13,18 @@ import (
 func (h *Handler) signUp(c *gin.Context) {
 	var input todo.User
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	id, err := h.services.Authorization.CreateUser(input)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusInternalServerError, err))
 		return
 	}
 
@@ -54,18 +54,18 @@ func (u signInInput) Validate() error {
 func (h *Handler) signIn(c *gin.Context) {
 	var input signInInput
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	token, err := h.services.Authorization.GenerateToken(input.Email, input.Password)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		responseWithError(c, err)
 		return
 	}
 
