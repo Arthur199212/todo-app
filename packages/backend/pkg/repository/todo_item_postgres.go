@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"todo-app"
+	"todo-app/models"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -15,7 +15,7 @@ func NewTodoItemPostgres(db *sqlx.DB) *TodoItemPostgres {
 	return &TodoItemPostgres{db: db}
 }
 
-func (r *TodoItemPostgres) Create(userId int, input todo.TodoItemInput) (int, error) {
+func (r *TodoItemPostgres) Create(userId int, input models.TodoItemInput) (int, error) {
 	query := fmt.Sprintf(`insert into %s (title, list_id)
 												values ($1, $2) returning id`, todoItemsTable)
 	row := r.db.QueryRow(query, input.Title, input.ListId)

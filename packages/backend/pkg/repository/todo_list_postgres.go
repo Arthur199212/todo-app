@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"todo-app"
+	"todo-app/models"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -24,21 +24,21 @@ func (r *TodoListPostgres) Create(userId int, title string) (int, error) {
 	return id, err
 }
 
-func (r *TodoListPostgres) GetAll(userId int) ([]todo.TodoList, error) {
-	var todoLists []todo.TodoList
+func (r *TodoListPostgres) GetAll(userId int) ([]models.TodoList, error) {
+	var todoLists []models.TodoList
 	query := fmt.Sprintf("select * from %s where user_id=$1", todoListTable)
 	err := r.db.Select(&todoLists, query, userId)
 	return todoLists, err
 }
 
-func (r *TodoListPostgres) GetById(userId, id int) (todo.TodoList, error) {
-	var todoList todo.TodoList
+func (r *TodoListPostgres) GetById(userId, id int) (models.TodoList, error) {
+	var todoList models.TodoList
 	query := fmt.Sprintf("select * from %s where user_id=$1 and id=$2", todoListTable)
 	err := r.db.Get(&todoList, query, userId, id)
 	return todoList, err
 }
 
-func (r *TodoListPostgres) Update(userId int, input todo.UpdateTodoListInput) error {
+func (r *TodoListPostgres) Update(userId int, input models.UpdateTodoListInput) error {
 	query := fmt.Sprintf("update %s set title=$1 where user_id=$2 and id=$3", todoListTable)
 	_, err := r.db.Exec(query, input.Title, userId, input.Id)
 	return err

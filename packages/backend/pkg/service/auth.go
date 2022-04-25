@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"todo-app"
+	"todo-app/models"
 	"todo-app/pkg/repository"
 
 	"github.com/golang-jwt/jwt"
@@ -22,7 +22,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user todo.User) (int, error) {
+func (s *AuthService) CreateUser(user models.User) (int, error) {
 	passwordHash, err := s.generatePasswordHash(user.Password)
 	if err != nil {
 		return 0, err

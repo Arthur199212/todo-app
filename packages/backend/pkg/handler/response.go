@@ -2,7 +2,7 @@ package handler
 
 import (
 	"net/http"
-	"todo-app"
+	"todo-app/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -15,7 +15,7 @@ type errorResponse struct {
 func responseWithError(c *gin.Context, err error) {
 	logrus.Errorln(err.Error())
 
-	if re, ok := err.(*todo.RequestError); ok {
+	if re, ok := err.(*models.RequestError); ok {
 		c.AbortWithStatusJSON(re.Status, re.Error())
 		return
 	}

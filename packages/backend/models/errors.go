@@ -1,4 +1,4 @@
-package todo
+package models
 
 type RequestError struct {
 	Status  int

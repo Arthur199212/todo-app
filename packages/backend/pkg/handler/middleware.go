@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
-	"todo-app"
+	"todo-app/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,13 +17,13 @@ const (
 func (h *Handler) authRequired(c *gin.Context) {
 	header := strings.Split(c.GetHeader(authHeader), " ")
 	if len(header) != 2 {
-		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, errors.New("not authorized")))
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, errors.New("not authorized")))
 		return
 	}
 	token := header[1]
 	userId, err := h.services.Authorization.ParseUserIdFromToken(token)
 	if err != nil {
-		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 

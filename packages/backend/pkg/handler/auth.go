@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 	"regexp"
-	"todo-app"
+	"todo-app/models"
 
 	"github.com/gin-gonic/gin"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -11,20 +11,20 @@ import (
 )
 
 func (h *Handler) signUp(c *gin.Context) {
-	var input todo.User
+	var input models.User
 	if err := c.BindJSON(&input); err != nil {
-		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	id, err := h.services.Authorization.CreateUser(input)
 	if err != nil {
-		responseWithError(c, todo.NewRequestError(http.StatusInternalServerError, err))
+		responseWithError(c, models.NewRequestError(http.StatusInternalServerError, err))
 		return
 	}
 
@@ -54,12 +54,12 @@ func (u signInInput) Validate() error {
 func (h *Handler) signIn(c *gin.Context) {
 	var input signInInput
 	if err := c.BindJSON(&input); err != nil {
-		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 

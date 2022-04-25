@@ -2,7 +2,7 @@ package handler
 
 import (
 	"net/http"
-	"todo-app"
+	"todo-app/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,18 +12,18 @@ func (h *Handler) getAllItems(c *gin.Context) {}
 func (h *Handler) createItem(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		responseWithError(c, todo.NewRequestError(http.StatusUnauthorized, err))
+		responseWithError(c, models.NewRequestError(http.StatusUnauthorized, err))
 		return
 	}
 
-	var input todo.TodoItemInput
+	var input models.TodoItemInput
 	if err := c.BindJSON(&input); err != nil {
-		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		responseWithError(c, todo.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 

@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"todo-app"
+	"todo-app/models"
 	"todo-app/pkg/handler"
 	"todo-app/pkg/repository"
 	"todo-app/pkg/service"
@@ -46,7 +46,7 @@ func main() {
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 
-	srv := new(todo.Server)
+	srv := new(models.Server)
 
 	go func() {
 		err := srv.Run(viper.GetString("port"), handlers.InitRoutes())

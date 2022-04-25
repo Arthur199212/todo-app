@@ -1,26 +1,26 @@
 package service
 
 import (
-	"todo-app"
+	"todo-app/models"
 	"todo-app/pkg/repository"
 )
 
 type Authorization interface {
-	CreateUser(input todo.User) (int, error)
+	CreateUser(input models.User) (int, error)
 	GenerateToken(email, password string) (string, error)
 	ParseUserIdFromToken(token string) (int, error)
 }
 
 type TodoList interface {
 	Create(userId int, title string) (int, error)
-	GetAll(userId int) ([]todo.TodoList, error)
-	GetById(userId, listId int) (todo.TodoList, error)
-	Update(userId int, input todo.UpdateTodoListInput) error
+	GetAll(userId int) ([]models.TodoList, error)
+	GetById(userId, listId int) (models.TodoList, error)
+	Update(userId int, input models.UpdateTodoListInput) error
 	Delete(userId, listId int) error
 }
 
 type TodoItem interface {
-	Create(userId int, input todo.TodoItemInput) (int, error)
+	Create(userId int, input models.TodoItemInput) (int, error)
 }
 
 type Service struct {

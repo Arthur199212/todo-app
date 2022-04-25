@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 	"net/http"
-	"todo-app"
+	"todo-app/models"
 	"todo-app/pkg/repository"
 
 	"github.com/sirupsen/logrus"
@@ -18,11 +18,11 @@ func NewTodoItem(repo repository.TodoItem, listRepo repository.TodoList) *TodoIt
 	return &TodoItemService{repo: repo, listRepo: listRepo}
 }
 
-func (s *TodoItemService) Create(userId int, input todo.TodoItemInput) (int, error) {
+func (s *TodoItemService) Create(userId int, input models.TodoItemInput) (int, error) {
 	_, err := s.listRepo.GetById(userId, input.ListId)
 	if err != nil {
 		logrus.Error(err)
-		return 0, todo.NewRequestError(http.StatusBadRequest, errors.New("list not found"))
+		return 0, models.NewRequestError(http.StatusBadRequest, errors.New("list not found"))
 	}
 
 	return s.repo.Create(userId, input)

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"todo-app"
+	"todo-app/models"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -13,21 +13,21 @@ const (
 )
 
 type Authorization interface {
-	CreateUser(user todo.User) (int, error)
-	GetUserByEmail(email string) (todo.User, error)
-	GetUserById(id int) (todo.User, error)
+	CreateUser(user models.User) (int, error)
+	GetUserByEmail(email string) (models.User, error)
+	GetUserById(id int) (models.User, error)
 }
 
 type TodoList interface {
 	Create(userId int, title string) (int, error)
-	GetAll(userId int) ([]todo.TodoList, error)
-	GetById(userId, id int) (todo.TodoList, error)
-	Update(userId int, input todo.UpdateTodoListInput) error
+	GetAll(userId int) ([]models.TodoList, error)
+	GetById(userId, id int) (models.TodoList, error)
+	Update(userId int, input models.UpdateTodoListInput) error
 	Delete(userId, listId int) error
 }
 
 type TodoItem interface {
-	Create(userId int, input todo.TodoItemInput) (int, error)
+	Create(userId int, input models.TodoItemInput) (int, error)
 }
 
 type Repository struct {

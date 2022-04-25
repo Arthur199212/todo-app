@@ -2,7 +2,7 @@ package service
 
 import (
 	"errors"
-	"todo-app"
+	"todo-app/models"
 	"todo-app/pkg/repository"
 )
 
@@ -22,15 +22,15 @@ func (s *TodoListService) Create(userId int, title string) (int, error) {
 	return s.repo.Create(userId, title)
 }
 
-func (s *TodoListService) GetAll(userId int) ([]todo.TodoList, error) {
+func (s *TodoListService) GetAll(userId int) ([]models.TodoList, error) {
 	return s.repo.GetAll(userId)
 }
 
-func (s *TodoListService) GetById(userId, listId int) (todo.TodoList, error) {
+func (s *TodoListService) GetById(userId, listId int) (models.TodoList, error) {
 	return s.repo.GetById(userId, listId)
 }
 
-func (s *TodoListService) Update(userId int, input todo.UpdateTodoListInput) error {
+func (s *TodoListService) Update(userId int, input models.UpdateTodoListInput) error {
 	return s.repo.Update(userId, input)
 }
 
