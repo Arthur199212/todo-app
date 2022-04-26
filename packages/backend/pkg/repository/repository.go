@@ -31,6 +31,7 @@ type TodoItem interface {
 	GetAllByListId(listId int) ([]models.TodoItem, error)
 	GetById(id int) (models.TodoItem, error)
 	Delete(id int) error
+	Update(itemId int, input models.UpdateTodoItemInput) error
 }
 
 type Repository struct {

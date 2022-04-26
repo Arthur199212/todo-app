@@ -37,6 +37,19 @@ type TodoItem struct {
 	ListId int    `json:"listId" db:"list_id"`
 }
 
+type UpdateTodoItemInput struct {
+	Title  *string `json:"title"`
+	Done   *bool   `json:"done"`
+	ListId int     `json:"listId"`
+}
+
+func (item UpdateTodoItemInput) Validate() error {
+	return validation.ValidateStruct(&item,
+		validation.Field(&item.Title, validation.Length(3, 50)),
+		validation.Field(&item.ListId, validation.Required, validation.Min(0)),
+	)
+}
+
 type TodoItemInput struct {
 	Title  string `json:"title"`
 	ListId int    `json:"listId"`

@@ -100,7 +100,45 @@ func (h *Handler) getItemById(c *gin.Context) {
 	c.JSON(http.StatusOK, item)
 }
 
-func (h *Handler) updateItem(c *gin.Context) {}
+func (h *Handler) updateItem(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		responseWithError(c, err)
+		return
+	}
+
+	itemId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		return
+	}
+
+	var input models.UpdateTodoItemInput
+	if err := c.BindJSON(&input); err != nil {
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		return
+	}
+
+	if err := validation.Validate(itemId,
+		validation.Required.Error("itemId is required"),
+		validation.Min(0).Error("itemId is required"),
+	); err != nil {
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		return
+	}
+
+	if err := input.Validate(); err != nil {
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		return
+	}
+
+	if err := h.services.TodoItem.Update(userId, itemId, input); err != nil {
+		responseWithError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{"message": "OK"})
+}
 
 type deleteItemInput struct {
 	ItemId int `json:"itemId"`
