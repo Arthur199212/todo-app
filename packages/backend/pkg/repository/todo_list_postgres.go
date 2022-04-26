@@ -45,8 +45,22 @@ func (r *TodoListPostgres) Update(userId int, input models.UpdateTodoListInput) 
 }
 
 func (r *TodoListPostgres) Delete(userId, listId int) error {
-	query := fmt.Sprintf("delete from %s where user_id=$1 and id=$2", todoListTable)
-	// todo: should also delete all related todoItems
-	_, err := r.db.Exec(query, userId, listId)
-	return err
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	deleteList := fmt.Sprintf("delete from %s where user_id=$1 and id=$2", todoListTable)
+	if _, err := tx.Exec(deleteList, userId, listId); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	deleteListItems := fmt.Sprintf("delete from %s where list_id=$1", todoItemsTable)
+	if _, err := tx.Exec(deleteListItems, listId); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
 }
