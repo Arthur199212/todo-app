@@ -17,7 +17,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 		return
 	}
 
-	listId, err := strconv.Atoi(c.Query("listId"))
+	listId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		responseWithError(c, models.NewRequestError(http.StatusBadRequest, errors.New("listId is invalid")))
 		return
@@ -48,11 +48,18 @@ func (h *Handler) createItem(c *gin.Context) {
 		return
 	}
 
+	listId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, errors.New("listId is invalid")))
+		return
+	}
+
 	var input models.TodoItemInput
 	if err := c.BindJSON(&input); err != nil {
 		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
+	input.ListId = listId
 
 	if err := input.Validate(); err != nil {
 		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
@@ -90,6 +97,10 @@ func (h *Handler) getItemById(c *gin.Context) {
 		validation.Required.Error("listId is required"),
 		validation.Min(0).Error("listId is invalid"),
 	)
+	if err != nil {
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		return
+	}
 
 	item, err := h.services.TodoItem.GetById(userId, listId, itemId)
 	if err != nil {
