@@ -102,4 +102,40 @@ func (h *Handler) getItemById(c *gin.Context) {
 
 func (h *Handler) updateItem(c *gin.Context) {}
 
-func (h *Handler) deleteItem(c *gin.Context) {}
+type deleteItemInput struct {
+	ItemId int `json:"itemId"`
+	ListId int `json:"listId"`
+}
+
+func (input deleteItemInput) Validate() error {
+	return validation.ValidateStruct(&input,
+		validation.Field(&input.ItemId, validation.Required, validation.Min(0)),
+		validation.Field(&input.ItemId, validation.Required, validation.Min(0)),
+	)
+}
+
+func (h *Handler) deleteItem(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		responseWithError(c, err)
+		return
+	}
+
+	var input deleteItemInput
+	if err := c.BindJSON(&input); err != nil {
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		return
+	}
+
+	if err := input.Validate(); err != nil {
+		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		return
+	}
+
+	if err := h.services.TodoItem.Delete(userId, input.ListId, input.ItemId); err != nil {
+		responseWithError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{"message": "OK"})
+}
