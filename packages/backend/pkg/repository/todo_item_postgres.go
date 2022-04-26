@@ -33,10 +33,12 @@ func (r *TodoItemPostgres) GetAllByListId(listId int) ([]models.TodoItem, error)
 	return items, err
 }
 
-func (r *TodoItemPostgres) GetById(id int) (models.TodoItem, error) {
+func (r *TodoItemPostgres) GetById(userId, itemId int) (models.TodoItem, error) {
 	var item models.TodoItem
-	query := fmt.Sprintf("select * from %s where id=$1", todoItemsTable)
-	err := r.db.Get(&item, query, id)
+	query := fmt.Sprintf(`select it.id, it.title, it.done, it.list_id from %s it
+												inner join %s lt on it.list_id=lt.id and lt.user_id=$1
+												where it.id=$2`, todoItemsTable, todoListTable)
+	err := r.db.Get(&item, query, userId, itemId)
 	return item, err
 }
 

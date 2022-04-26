@@ -88,21 +88,7 @@ func (h *Handler) getItemById(c *gin.Context) {
 		return
 	}
 
-	listId, err := strconv.Atoi(c.Query("listId"))
-	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
-		return
-	}
-	err = validation.Validate(listId,
-		validation.Required.Error("listId is required"),
-		validation.Min(0).Error("listId is invalid"),
-	)
-	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
-		return
-	}
-
-	item, err := h.services.TodoItem.GetById(userId, listId, itemId)
+	item, err := h.services.TodoItem.GetById(userId, itemId)
 	if err != nil {
 		responseWithError(c, err)
 		return

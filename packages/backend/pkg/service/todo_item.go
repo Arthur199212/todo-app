@@ -38,14 +38,14 @@ func (s *TodoItemService) GetAllByListId(userId, listId int) ([]models.TodoItem,
 	return s.repo.GetAllByListId(listId)
 }
 
-func (s *TodoItemService) GetById(userId, listId, itemId int) (models.TodoItem, error) {
-	_, err := s.listRepo.GetById(userId, listId)
+func (s *TodoItemService) GetById(userId, itemId int) (models.TodoItem, error) {
+	item, err := s.repo.GetById(userId, itemId)
 	if err != nil {
-		logrus.Error(err)
-		return models.TodoItem{}, models.NewRequestError(http.StatusBadRequest, errors.New("list not found"))
+		logrus.Errorln("GetById:", err.Error())
+		return item, models.NewRequestError(http.StatusBadRequest, errors.New("item not found"))
 	}
 
-	return s.repo.GetById(itemId)
+	return item, nil
 }
 
 func (s *TodoItemService) Delete(userId, listId, itemId int) error {
