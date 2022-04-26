@@ -13,7 +13,7 @@ import (
 func (h *Handler) getAllItems(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, err)
 		return
 	}
 
@@ -44,7 +44,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 func (h *Handler) createItem(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusUnauthorized, err))
+		responseWithError(c, err)
 		return
 	}
 

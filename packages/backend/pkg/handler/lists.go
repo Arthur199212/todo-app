@@ -12,7 +12,7 @@ import (
 func (h *Handler) getAllLists(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusUnauthorized, err))
+		responseWithError(c, err)
 		return
 	}
 
@@ -39,7 +39,7 @@ func (input todoListInput) Validate() error {
 func (h *Handler) createList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusUnauthorized, err))
+		responseWithError(c, err)
 		return
 	}
 
@@ -66,7 +66,7 @@ func (h *Handler) createList(c *gin.Context) {
 func (h *Handler) getListById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusUnauthorized, err))
+		responseWithError(c, err)
 		return
 	}
 
@@ -88,7 +88,7 @@ func (h *Handler) getListById(c *gin.Context) {
 func (h *Handler) updateList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusUnauthorized, err))
+		responseWithError(c, err)
 		return
 	}
 
@@ -121,7 +121,7 @@ func (h *Handler) updateList(c *gin.Context) {
 func (h *Handler) deleteList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusUnauthorized, err))
+		responseWithError(c, err)
 		return
 	}
 

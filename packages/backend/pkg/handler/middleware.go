@@ -33,12 +33,12 @@ func (h *Handler) authRequired(c *gin.Context) {
 func getUserId(c *gin.Context) (int, error) {
 	userId, ok := c.Get(userCtx)
 	if !ok {
-		return 0, errors.New("userId is invalid")
+		return 0, models.NewRequestError(http.StatusUnauthorized, errors.New("userId is invalid"))
 	}
 
 	userIdInt, ok := userId.(int)
 	if !ok {
-		return 0, errors.New("userId is invalid")
+		return 0, models.NewRequestError(http.StatusUnauthorized, errors.New("userId is invalid"))
 	}
 
 	return userIdInt, nil
