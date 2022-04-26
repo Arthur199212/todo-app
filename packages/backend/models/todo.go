@@ -38,15 +38,13 @@ type TodoItem struct {
 }
 
 type UpdateTodoItemInput struct {
-	Title  *string `json:"title"`
-	Done   *bool   `json:"done"`
-	ListId int     `json:"listId"`
+	Title *string `json:"title"`
+	Done  *bool   `json:"done"`
 }
 
 func (item UpdateTodoItemInput) Validate() error {
 	return validation.ValidateStruct(&item,
 		validation.Field(&item.Title, validation.Length(3, 50)),
-		validation.Field(&item.ListId, validation.Required, validation.Min(0)),
 	)
 }
 

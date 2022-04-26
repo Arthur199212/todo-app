@@ -116,14 +116,6 @@ func (h *Handler) updateItem(c *gin.Context) {
 		return
 	}
 
-	if err := validation.Validate(itemId,
-		validation.Required.Error("itemId is required"),
-		validation.Min(0).Error("itemId is required"),
-	); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
-		return
-	}
-
 	if err := input.Validate(); err != nil {
 		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return

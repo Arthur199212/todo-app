@@ -59,15 +59,11 @@ func (s *TodoItemService) Delete(userId, listId, itemId int) error {
 }
 
 func (s *TodoItemService) Update(userId, itemId int, input models.UpdateTodoItemInput) error {
-	_, err := s.listRepo.GetById(userId, input.ListId)
-	if err != nil {
-		logrus.Error(err)
-		return models.NewRequestError(http.StatusBadRequest, errors.New("list not found"))
-	}
-
 	if input.Done == nil && input.Title == nil {
 		return models.NewRequestError(http.StatusBadRequest, errors.New("no input to update"))
 	}
 
-	return s.repo.Update(itemId, input)
+	err := s.repo.Update(userId, itemId, input)
+	logrus.Error("Update:", err)
+	return errors.New("item was not updated")
 }

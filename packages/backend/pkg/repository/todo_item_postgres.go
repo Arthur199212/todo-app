@@ -48,7 +48,7 @@ func (r *TodoItemPostgres) Delete(id int) error {
 	return err
 }
 
-func (r *TodoItemPostgres) Update(itemId int, input models.UpdateTodoItemInput) error {
+func (r *TodoItemPostgres) Update(userId, itemId int, input models.UpdateTodoItemInput) error {
 	setValues := []string{}
 	args := []interface{}{}
 	argId := 1
@@ -65,13 +65,23 @@ func (r *TodoItemPostgres) Update(itemId int, input models.UpdateTodoItemInput) 
 		argId++
 	}
 
+	if len(setValues) == 0 {
+		return errors.New("no input to update")
+	}
+
 	setQuery := strings.Join(setValues, ", ")
 
-	query := fmt.Sprintf("update %s set %s where id=$%d",
-		todoItemsTable, setQuery, argId)
-	args = append(args, itemId)
+	query := fmt.Sprintf(`update %s it set %s
+												from %s lt
+												where it.id=$%d and lt.id=it.list_id and lt.user_id=$%d`,
+		todoItemsTable, setQuery, todoListTable, argId, argId+1)
+	args = append(args, itemId, userId)
 
 	res, err := r.db.Exec(query, args...)
+	if err != nil {
+		return err
+	}
+
 	if rows, err := res.RowsAffected(); err != nil || rows == 0 {
 		return errors.New("item not found")
 	}
