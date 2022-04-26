@@ -23,7 +23,7 @@ type TodoItem interface {
 	Create(userId int, input models.TodoItemInput) (int, error)
 	GetAllByListId(userId, listId int) ([]models.TodoItem, error)
 	GetById(userId, itemId int) (models.TodoItem, error)
-	Delete(userId, listId, itemId int) error
+	Delete(userId, itemId int) error
 	Update(userId, itemId int, input models.UpdateTodoItemInput) error
 }
 

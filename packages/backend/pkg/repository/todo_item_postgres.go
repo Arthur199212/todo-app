@@ -42,9 +42,19 @@ func (r *TodoItemPostgres) GetById(userId, itemId int) (models.TodoItem, error) 
 	return item, err
 }
 
-func (r *TodoItemPostgres) Delete(id int) error {
-	query := fmt.Sprintf("delete from %s where id=$1", todoItemsTable)
-	_, err := r.db.Exec(query, id)
+func (r *TodoItemPostgres) Delete(userId, itemId int) error {
+	query := fmt.Sprintf(`delete from %s it
+												using %s lt 
+												where it.id=$1 and lt.user_id=$2 and lt.id=it.list_id`, todoItemsTable, todoListTable)
+	res, err := r.db.Exec(query, itemId, userId)
+	if err != nil {
+		return err
+	}
+
+	if rows, err := res.RowsAffected(); err != nil || rows == 0 {
+		return errors.New("item was not deleted")
+	}
+
 	return err
 }
 

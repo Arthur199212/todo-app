@@ -21,7 +21,7 @@ func NewTodoItem(repo repository.TodoItem, listRepo repository.TodoList) *TodoIt
 func (s *TodoItemService) Create(userId int, input models.TodoItemInput) (int, error) {
 	_, err := s.listRepo.GetById(userId, input.ListId)
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorln("Create:", err)
 		return 0, models.NewRequestError(http.StatusBadRequest, errors.New("list not found"))
 	}
 
@@ -31,7 +31,7 @@ func (s *TodoItemService) Create(userId int, input models.TodoItemInput) (int, e
 func (s *TodoItemService) GetAllByListId(userId, listId int) ([]models.TodoItem, error) {
 	_, err := s.listRepo.GetById(userId, listId)
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorln("GetAllByListId:", err)
 		return nil, models.NewRequestError(http.StatusBadRequest, errors.New("list not found"))
 	}
 
@@ -48,14 +48,13 @@ func (s *TodoItemService) GetById(userId, itemId int) (models.TodoItem, error) {
 	return item, nil
 }
 
-func (s *TodoItemService) Delete(userId, listId, itemId int) error {
-	_, err := s.listRepo.GetById(userId, listId)
-	if err != nil {
-		logrus.Error(err)
-		return models.NewRequestError(http.StatusBadRequest, errors.New("list not found"))
+func (s *TodoItemService) Delete(userId, itemId int) error {
+	if err := s.repo.Delete(userId, itemId); err != nil {
+		logrus.Errorln("Delete:", err)
+		return models.NewRequestError(http.StatusBadRequest, errors.New("item was not deleted"))
 	}
 
-	return s.repo.Delete(itemId)
+	return nil
 }
 
 func (s *TodoItemService) Update(userId, itemId int, input models.UpdateTodoItemInput) error {
@@ -64,6 +63,10 @@ func (s *TodoItemService) Update(userId, itemId int, input models.UpdateTodoItem
 	}
 
 	err := s.repo.Update(userId, itemId, input)
-	logrus.Error("Update:", err)
-	return errors.New("item was not updated")
+	if err != nil {
+		logrus.Errorln("Update:", err)
+		return models.NewRequestError(http.StatusBadRequest, errors.New("item was not updated"))
+	}
+
+	return nil
 }

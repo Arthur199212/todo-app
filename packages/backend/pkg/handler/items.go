@@ -129,18 +129,6 @@ func (h *Handler) updateItem(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{"message": "OK"})
 }
 
-type deleteItemInput struct {
-	ItemId int `json:"itemId"`
-	ListId int `json:"listId"`
-}
-
-func (input deleteItemInput) Validate() error {
-	return validation.ValidateStruct(&input,
-		validation.Field(&input.ItemId, validation.Required, validation.Min(0)),
-		validation.Field(&input.ItemId, validation.Required, validation.Min(0)),
-	)
-}
-
 func (h *Handler) deleteItem(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -148,18 +136,13 @@ func (h *Handler) deleteItem(c *gin.Context) {
 		return
 	}
 
-	var input deleteItemInput
-	if err := c.BindJSON(&input); err != nil {
+	itemId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
 		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
 		return
 	}
 
-	if err := input.Validate(); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
-		return
-	}
-
-	if err := h.services.TodoItem.Delete(userId, input.ListId, input.ItemId); err != nil {
+	if err := h.services.TodoItem.Delete(userId, itemId); err != nil {
 		responseWithError(c, err)
 		return
 	}
