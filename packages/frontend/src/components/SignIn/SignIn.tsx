@@ -1,8 +1,33 @@
-import { useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
+import { validateSignInInput } from './validation'
 
 export const SignIn = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {}
+  )
+  const [triedToSubmit, setTriedToSubmit] = useState(false)
+
+  useEffect(() => {
+    if (!triedToSubmit) return
+    validateSignInInput({ email, password })
+      .then(errs => setErrors(errs))
+      .catch(e => console.error('useEffect: validateSignInInput:', e))
+  }, [email, password, triedToSubmit])
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setTriedToSubmit(true)
+    try {
+      const validationErrors = await validateSignInInput({ email, password })
+      setErrors(validationErrors)
+
+      // todo
+    } catch (e) {
+      console.error('handleSubmit:', e)
+    }
+  }
 
   return (
     <div className='h-full w-full flex justify-center items-center'>
@@ -11,9 +36,14 @@ export const SignIn = () => {
         <h2 className='mt-1 text-lg font-bold flex-1 text-center'>
           👋 Welcome
         </h2>
-        <form className='mt-4 flex flex-wrap justify-center' action='submit'>
+        <form
+          className='mt-4 flex flex-wrap justify-center'
+          onSubmit={handleSubmit}
+        >
           <input
-            className='p-2 border border-gray-800 rounded-md w-full'
+            className={`p-2 border ${
+              errors.email ? 'border-red-500' : 'border-gray-800'
+            } rounded-md w-full`}
             type='text'
             name='email'
             id='email'
@@ -23,8 +53,13 @@ export const SignIn = () => {
               setEmail(e.target.value)
             }}
           />
+          {errors.email && (
+            <p className='mt-1 w-full text-sm'>{errors.email}</p>
+          )}
           <input
-            className='mt-2 p-2 border border-gray-800 rounded-md w-full'
+            className={`mt-2 p-2 border ${
+              errors.password ? 'border-red-500' : 'border-gray-800'
+            } rounded-md w-full`}
             type='password'
             name='password'
             id='password'
@@ -34,9 +69,12 @@ export const SignIn = () => {
               setPassword(e.target.value)
             }}
           />
+          {errors.password && (
+            <p className='mt-1 w-full text-sm'>{errors.password}</p>
+          )}
           <button
             className='mt-3 w-20 p-2 rounded-md bg-gray-900 text-neutral-50 font-bold'
-            type='button'
+            type='submit'
           >
             Sign In
           </button>
