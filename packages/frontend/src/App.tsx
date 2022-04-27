@@ -1,3 +1,13 @@
+import { SignIn } from './components/SignIn/SignIn'
+
 export const App = () => {
-  return <h1>Hello world!</h1>;
+  const isUserSignedIn = false
+
+  if (!isUserSignedIn) return <SignIn />
+
+  return (
+    <div>
+      Todo App
+    </div>
+  )
 }
