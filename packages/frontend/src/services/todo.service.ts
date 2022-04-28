@@ -21,12 +21,32 @@ export const createList = async (title: string): Promise<string> => {
   const {
     data: { id }
   } = await instance.post('/lists/', { title })
-  if (!id) throw new Error('createTodoList: list was not created')
+  if (!id) throw new Error('createList: list was not created')
   return id
 }
 
 export const getAllLists = async (): Promise<any> => {
   const { data } = await instance.get('/lists/')
   if (!data) throw new Error('getAllLists: could not get todo lists')
+  return data
+}
+
+export const createItem = async ({
+  title,
+  listId
+}: {
+  title: string
+  listId: string
+}): Promise<string> => {
+  const {
+    data: { id }
+  } = await instance.post(`/lists/${listId}/items/`, { title })
+  if (!id) throw new Error('createItem: list was not created')
+  return id
+}
+
+export const getAllItemsByListId = async (listId: string): Promise<any> => {
+  const { data } = await instance.get(`/lists/${listId}/items/`)
+  if (!data) throw new Error('getAllItemsByListId: could not get todo lists')
   return data
 }

@@ -1,41 +1,48 @@
 import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useNavigate } from 'react-router-dom'
-import { createList, getAllLists } from '../../services/todo.service'
+import { createItem, getAllItemsByListId } from '../../services/todo.service'
+import { Spinner } from '../Spinner'
 
-export const Lists = () => {
-  const [addList, setAddList] = useState(false)
+// todo: some of the UI items can be done as a separate component and potentially be reused
+
+export const Items = () => {
+  // todo: show list title
+  const { id: listId } = useParams()
+  const query = useQuery(['items', listId], () => getAllItemsByListId(listId))
+  const [addItem, setAddItem] = useState(false)
   const [title, setTitle] = useState('')
-  const query = useQuery('lists', getAllLists)
-  const mutation = useMutation(createList)
+  const mutation = useMutation(createItem)
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
 
-  const handleAddList = () => {
-    mutation.mutate(title, {
-      onSuccess: () => {
-        queryClient.invalidateQueries('lists')
-        setAddList(false)
-        setTitle('')
+  const handleAddItem = () => {
+    mutation.mutate(
+      { title, listId },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries('items')
+          setAddItem(false)
+          setTitle('')
+        }
       }
-    })
+    )
   }
 
   return (
     <>
       <div className='flex mt-3 h-12 flex-wrap justify-center items-center'>
-        {!addList && (
+        {!addItem && (
           <>
-            <h2 className='flex flex-1 h-12 items-center font-bold'>Lists:</h2>
+            <h2 className='flex flex-1 h-12 items-center font-bold'>Items:</h2>
             <button
               className='h-10 w-20 bg-gray-100 rounded-md font-bold'
-              onClick={() => setAddList(true)}
+              onClick={() => setAddItem(true)}
             >
-              Add list
+              Add item
             </button>
           </>
         )}
-        {addList && (
+        {addItem && (
           <>
             {mutation.isLoading && (
               <div>
@@ -69,14 +76,14 @@ export const Lists = () => {
                 />
                 <button
                   className='h-10 w-10 bg-gray-100 rounded-md font-bold'
-                  onClick={handleAddList}
+                  onClick={handleAddItem}
                 >
                   ✔
                 </button>
                 <button
                   className='h-10 w-10 bg-gray-100 rounded-md font-bold'
                   onClick={() => {
-                    setAddList(false)
+                    setAddItem(false)
                     setTitle('')
                   }}
                 >
@@ -88,17 +95,24 @@ export const Lists = () => {
         )}
       </div>
       <div className='flex-1 overflow-y-auto'>
+        {query.isLoading && (
+          <div className='h-full w-full flex justify-center items-center'>
+            <Spinner />
+          </div>
+        )}
         {query.data &&
-          query.data.map(list => (
+          query.data.map(item => (
             <div
-              key={list.id}
+              key={item.id}
               className='mt-2 p-3 w-full h-12 rounded-md shadow cursor-pointer'
-              onClick={() => navigate(`/lists/${list.id}`)}
+              // todo: toggle done/not
+              // onClick={() => {}}
             >
-              {list.title}
+              {item.done ? '✔ ' : '📝 '}
+              {item.title}
             </div>
           ))}
-        {!query.data && <div>No lists yet</div>}
+        {!query.data && !query.isLoading && <div>No items yet</div>}
       </div>
     </>
   )

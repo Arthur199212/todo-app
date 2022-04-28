@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
-import { SignIn } from './components/SignIn'
-import { Lists } from './components/Lists'
+import { Items, Lists, SignIn } from './components'
 import { checkIfAuthenticated } from './services/auth.service'
 
 export const App = () => {
@@ -19,7 +18,14 @@ export const App = () => {
   return (
     <div className='h-full w-full flex justify-center items-center'>
       <div className='flex flex-col p-3 w-80 h-[38rem] rounded-md shadow'>
-        <h1 className='font-bold text-lg text-center'>🎯 Todo App</h1>
+        <div className='flex justify-center items-center'>
+          <h1
+            className='w-32 font-bold text-lg text-center cursor-pointer'
+            onClick={() => navigate('/')}
+          >
+            🎯 Todo App
+          </h1>
+        </div>
 
         <Routes>
           <Route path='/' element={<Lists />} />
@@ -32,8 +38,4 @@ export const App = () => {
       </div>
     </div>
   )
-}
-
-function Items () {
-  return <div>Items of a list</div>
 }
