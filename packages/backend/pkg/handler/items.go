@@ -72,7 +72,7 @@ func (h *Handler) createItem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, id)
+	c.JSON(http.StatusOK, map[string]interface{}{"id": id})
 }
 
 func (h *Handler) getItemById(c *gin.Context) {
