@@ -22,7 +22,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router.Use(cors.New(cors.Config{
 		AllowAllOrigins:  true,
 		AllowCredentials: true,
-		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST"},
+		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "accept", "origin", "Cache-Control", "X-Requested-With"},
 		ExposeHeaders:    []string{"Content-Length"},
 	}))
