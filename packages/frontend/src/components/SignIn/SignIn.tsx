@@ -1,13 +1,24 @@
+import isEmpty from 'lodash/isEmpty'
 import { FormEvent, useEffect, useState } from 'react'
+import { useMutation } from 'react-query'
+import { authenticate } from '../../services/auth.service'
+import { ErrorScreen } from '../ErrorScreen'
+import { Spinner } from '../Spinner'
 import { validateSignInInput } from './validation'
 
-export const SignIn = () => {
+type SignInProps = {
+  setIsUserSignedIn: (isSignedIn: boolean) => void
+}
+
+export const SignIn = ({ setIsUserSignedIn }: SignInProps) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
   )
   const [triedToSubmit, setTriedToSubmit] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const { mutate, isLoading } = useMutation(authenticate)
 
   useEffect(() => {
     if (!triedToSubmit) return
@@ -20,13 +31,34 @@ export const SignIn = () => {
     e.preventDefault()
     setTriedToSubmit(true)
     try {
-      const validationErrors = await validateSignInInput({ email, password })
+      const input = { email, password }
+      const validationErrors = await validateSignInInput(input)
       setErrors(validationErrors)
-
-      // todo
+      if (!isEmpty(validationErrors)) return
+      mutate(input, {
+        onSuccess: () => {
+          setIsUserSignedIn(true)
+        },
+        onError: () => {
+          setIsUserSignedIn(false)
+          setIsError(true)
+        }
+      })
     } catch (e) {
       console.error('handleSubmit:', e)
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className='h-full w-full flex justify-center items-center'>
+        <Spinner />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return <ErrorScreen />
   }
 
   return (

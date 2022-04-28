@@ -1,13 +1,15 @@
+import { useEffect, useState } from 'react'
 import { SignIn } from './components/SignIn/SignIn'
+import { checkIfAuthenticated } from './services/auth.service'
 
 export const App = () => {
-  const isUserSignedIn = false
+  const [isUserSignedIn, setIsUserSignedIn] = useState(false)
 
-  if (!isUserSignedIn) return <SignIn />
+  useEffect(() => {
+    setIsUserSignedIn(checkIfAuthenticated())
+  }, [])
 
-  return (
-    <div>
-      Todo App
-    </div>
-  )
+  if (!isUserSignedIn) return <SignIn setIsUserSignedIn={setIsUserSignedIn} />
+
+  return <div>Todo App</div>
 }
