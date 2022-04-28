@@ -6,6 +6,7 @@ require github.com/lib/pq v1.10.5
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
+	github.com/gin-contrib/cors v1.3.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 )
 
