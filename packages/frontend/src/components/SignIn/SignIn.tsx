@@ -64,7 +64,7 @@ export const SignIn = ({ setIsUserSignedIn }: SignInProps) => {
   return (
     <div className='h-full w-full flex justify-center items-center'>
       <div className='w-80'>
-        <h1 className='text-lg font-bold flex-1 text-center'>Todo App</h1>
+        {/* <h1 className='text-lg font-bold flex-1 text-center'>Todo App</h1> */}
         <h2 className='mt-1 text-lg font-bold flex-1 text-center'>
           👋 Welcome
         </h2>
