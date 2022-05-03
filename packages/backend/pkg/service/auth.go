@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"todo-app/pkg/repository"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -25,10 +27,16 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 func (s *AuthService) CreateUser(user models.User) (int, error) {
 	passwordHash, err := s.generatePasswordHash(user.Password)
 	if err != nil {
-		return 0, err
+		logrus.Errorln("CreateUser:", err)
+		return 0, models.NewRequestError(http.StatusInternalServerError, errors.New("password is not valid"))
 	}
 	user.Password = passwordHash
-	return s.repo.CreateUser(user)
+
+	id, err := s.repo.CreateUser(user)
+	if err != nil {
+		return 0, models.NewRequestError(http.StatusInternalServerError, errors.New("could not create user"))
+	}
+	return id, nil
 }
 
 func (s *AuthService) generatePasswordHash(password string) (string, error) {
@@ -42,11 +50,13 @@ func (s *AuthService) generatePasswordHash(password string) (string, error) {
 func (s *AuthService) GenerateToken(email, password string) (string, error) {
 	user, err := s.repo.GetUserByEmail(email)
 	if err != nil {
-		return "", err
+		logrus.Errorln("GenerateToken:", err)
+		return "", models.NewRequestError(http.StatusBadRequest, errors.New("email or password are not correct"))
 	}
 
 	if err := s.compareHashAndPassword(user.Password, password); err != nil {
-		return "", err
+		logrus.Errorln("GenerateToken:", err)
+		return "", models.NewRequestError(http.StatusBadRequest, errors.New("email or password are not correct"))
 	}
 
 	token, err := s.generateAccessToken(strconv.Itoa(user.Id))

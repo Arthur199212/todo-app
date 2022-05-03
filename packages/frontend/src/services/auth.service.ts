@@ -14,8 +14,6 @@ type AuthInput = {
   password: string
 }
 
-// todo: update error message
-// "pq: duplicate key value violates unique constraint \"users_email_key\""
 const signUp = async (input: AuthInput) => {
   try {
     const { data } = await axios.post(`${API_URL}/auth/sign-up`, input, {
@@ -29,8 +27,6 @@ const signUp = async (input: AuthInput) => {
   }
 }
 
-// todo: update error message
-// "\"crypto/bcrypt: hashedPassword is not the hash of the given password\""
 const signIn = async (input: AuthInput): Promise<string> => {
   try {
     const {
