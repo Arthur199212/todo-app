@@ -1,16 +1,13 @@
 import isEmpty from 'lodash/isEmpty'
 import { FormEvent, useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import { authenticate } from '../../services/auth.service'
 import { ErrorScreen } from '../ErrorScreen'
 import { Spinner } from '../Spinner'
 import { validateSignInInput } from './validation'
 
-type SignInProps = {
-  setIsUserSignedIn: (isSignedIn: boolean) => void
-}
-
-export const SignIn = ({ setIsUserSignedIn }: SignInProps) => {
+export const SignIn = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
@@ -19,6 +16,7 @@ export const SignIn = ({ setIsUserSignedIn }: SignInProps) => {
   const [triedToSubmit, setTriedToSubmit] = useState(false)
   const [isError, setIsError] = useState(false)
   const { mutate, isLoading } = useMutation(authenticate)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!triedToSubmit) return
@@ -37,10 +35,9 @@ export const SignIn = ({ setIsUserSignedIn }: SignInProps) => {
       if (!isEmpty(validationErrors)) return
       mutate(input, {
         onSuccess: () => {
-          setIsUserSignedIn(true)
+          navigate('/')
         },
         onError: () => {
-          setIsUserSignedIn(false)
           setIsError(true)
         }
       })

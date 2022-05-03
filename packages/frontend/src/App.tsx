@@ -4,16 +4,11 @@ import { Items, Lists, SignIn } from './components'
 import { checkIfAuthenticated } from './services/auth.service'
 
 export const App = () => {
-  const [isUserSignedIn, setIsUserSignedIn] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
-    setIsUserSignedIn(checkIfAuthenticated())
+    if (!checkIfAuthenticated()) navigate('/sign-in')
   }, [])
-
-  if (!isUserSignedIn) {
-    navigate('/sign-in')
-  }
 
   return (
     <div className='h-full w-full flex justify-center items-center'>
@@ -30,10 +25,7 @@ export const App = () => {
         <Routes>
           <Route path='/' element={<Lists />} />
           <Route path='lists/:id' element={<Items />} />
-          <Route
-            path='sign-in'
-            element={<SignIn setIsUserSignedIn={setIsUserSignedIn} />}
-          />
+          <Route path='sign-in' element={<SignIn />} />
         </Routes>
       </div>
     </div>

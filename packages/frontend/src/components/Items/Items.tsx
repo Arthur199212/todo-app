@@ -1,26 +1,34 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { createItem, getAllItemsByListId } from '../../services/todo.service'
+import {
+  createItem,
+  getAllItemsByListId,
+  getListById,
+  toggleTodo
+} from '../../services/todo.service'
 import { Spinner } from '../Spinner'
 
 // todo: some of the UI items can be done as a separate component and potentially be reused
 
 export const Items = () => {
-  // todo: show list title
   const { id: listId } = useParams()
-  const query = useQuery(['items', listId], () => getAllItemsByListId(listId))
+  const itemsQuery = useQuery(['items', listId], () =>
+    getAllItemsByListId(listId)
+  )
+  const toggleItemMutation = useMutation(toggleTodo)
+  const listQuery = useQuery(['list', listId], () => getListById(listId))
   const [addItem, setAddItem] = useState(false)
   const [title, setTitle] = useState('')
-  const mutation = useMutation(createItem)
+  const createItemMutation = useMutation(createItem)
   const queryClient = useQueryClient()
 
   const handleAddItem = () => {
-    mutation.mutate(
+    createItemMutation.mutate(
       { title, listId },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries('items')
+          queryClient.invalidateQueries(['items', listId])
           setAddItem(false)
           setTitle('')
         }
@@ -30,10 +38,13 @@ export const Items = () => {
 
   return (
     <>
-      <div className='flex mt-3 h-12 flex-wrap justify-center items-center'>
+      <h2 className='flex mt-3 items-center font-bold'>
+        List: {listQuery?.data?.title}
+      </h2>
+      <div className='flex h-12 flex-wrap justify-center items-center'>
         {!addItem && (
           <>
-            <h2 className='flex flex-1 h-12 items-center font-bold'>Items:</h2>
+            <h3 className='flex flex-1 h-12 items-center font-bold'>Items:</h3>
             <button
               className='h-10 w-20 bg-gray-100 rounded-md font-bold'
               onClick={() => setAddItem(true)}
@@ -44,7 +55,7 @@ export const Items = () => {
         )}
         {addItem && (
           <>
-            {mutation.isLoading && (
+            {createItemMutation.isLoading && (
               <div>
                 <svg
                   role='status'
@@ -65,7 +76,7 @@ export const Items = () => {
                 Loading...
               </div>
             )}
-            {!mutation.isLoading && (
+            {!createItemMutation.isLoading && (
               <>
                 <input
                   className='flex-1 p-2 border rounded-md'
@@ -95,24 +106,29 @@ export const Items = () => {
         )}
       </div>
       <div className='flex-1 overflow-y-auto'>
-        {query.isLoading && (
+        {itemsQuery.isLoading && (
           <div className='h-full w-full flex justify-center items-center'>
             <Spinner />
           </div>
         )}
-        {query.data &&
-          query.data.map(item => (
+        {itemsQuery.data &&
+          itemsQuery.data.map(item => (
             <div
               key={item.id}
               className='mt-2 p-3 w-full h-12 rounded-md shadow cursor-pointer'
-              // todo: toggle done/not
-              // onClick={() => {}}
+              onClick={() => {
+                toggleItemMutation.mutate(item, {
+                  onSuccess: () => {
+                    queryClient.invalidateQueries(['items', listId])
+                  }
+                })
+              }}
             >
               {item.done ? '✔ ' : '📝 '}
               {item.title}
             </div>
           ))}
-        {!query.data && !query.isLoading && <div>No items yet</div>}
+        {!itemsQuery.data && !itemsQuery.isLoading && <div>No items yet</div>}
       </div>
     </>
   )

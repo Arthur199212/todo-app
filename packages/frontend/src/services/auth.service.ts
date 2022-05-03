@@ -3,7 +3,7 @@ import { ACCESS_TOKEN_KEY, API_URL } from '../config'
 
 let accessToken: string
 
-const setAccessToken = (token: string) => {
+export const setAccessToken = (token: string) => {
   accessToken = token
 }
 
@@ -14,7 +14,7 @@ type AuthInput = {
   password: string
 }
 
-// todo
+// todo: update error message
 // "pq: duplicate key value violates unique constraint \"users_email_key\""
 const signUp = async (input: AuthInput) => {
   try {
@@ -29,7 +29,7 @@ const signUp = async (input: AuthInput) => {
   }
 }
 
-// todo
+// todo: update error message
 // "\"crypto/bcrypt: hashedPassword is not the hash of the given password\""
 const signIn = async (input: AuthInput): Promise<string> => {
   try {
