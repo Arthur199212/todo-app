@@ -1,15 +1,24 @@
 # Backend
 
+### Technologies
+
+1. Golang
+1. Gin
+1. JWT
+1. bcrypt
+1. ozzo-validation
+1. SQL
+
 ### How to start
 
 1. Create docker volume
-`docker create volume pgdata`
-2. Spin up PostgreSQL DB in docker container
-`npm run up`
-3. Build the code
-`npm run build`
-4. Start the server
-`./bin/main.exe`
+   `docker create volume pgdata`
+1. Spin up PostgreSQL DB in docker container
+   `npm run up`
+1. Build the code
+   `npm run build`
+1. Start the server
+   `./bin/main.exe`
 
 ### How to run migrations with [migrate](https://github.com/golang-migrate/migrate)
 

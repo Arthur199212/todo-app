@@ -1,0 +1,319 @@
+{
+  "info": {
+    "_postman_id": "ae1a40d0-3cc7-4724-ac34-ddac3c4caf83",
+    "name": "ToDo App 2.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Sing Up",
+      "id": "bf772a2f-ad20-4a69-85ca-a518a6087d32",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"arthur5@gmail.com\",\r\n    \"password\": \"!Welcome01\"\r\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/auth/sign-up"
+      },
+      "response": []
+    },
+    {
+      "name": "Sing In",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Create test user', () => {\r",
+              "    var body = pm.response.json();\r",
+              "    pm.environment.set('token', body.token)\r",
+              "});\r",
+              ""
+            ]
+          }
+        }
+      ],
+      "id": "0c8d6d7b-2885-4d29-9b1b-77b9529be8fa",
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"arthur1@gmail.com\",\r\n    \"password\": \"!Welcome01\"\r\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/auth/sign-in"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Lists GetAll",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "de480226-f0e6-4885-a075-342c218a75b2",
+      "protocolProfileBehavior": { "disableBodyPruning": true },
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/lists"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Lists GetById",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "4c7642e7-f27e-435f-823b-02309304ad12",
+      "protocolProfileBehavior": { "disableBodyPruning": true },
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/lists/1/"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Lists Create",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "62e01abb-50b2-4c40-b345-bb90fad6338f",
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"Job Todo\"\r\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/lists"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Lists Update",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "f7f40f2f-c0aa-4716-a8fa-bacf2a8fa1c4",
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"Update todo list\"\r\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/lists/1"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Lists Delete",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "a80f7cc9-9e11-4144-b67c-2f0644d0afbf",
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"Update todo list\"\r\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/lists/2"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Items GetById",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "631ee40c-e8e6-4b60-8704-7e97c4ee4bb7",
+      "protocolProfileBehavior": { "disableBodyPruning": true },
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/items/3"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Items GetAllByListId",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "3dcbf4d6-21c2-4eb3-a020-846eeeb7c074",
+      "protocolProfileBehavior": { "disableBodyPruning": true },
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/lists/1/items/"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Items Create",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "53063175-1042-41cc-b974-0cfa9a2bf280",
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"Create a new validaiton rule\",\r\n    \"listId\": 1\r\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/lists/6/items"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Items Update",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "23345e7f-917c-43a6-83a3-78d45e9ad502",
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"Create a dashboard\",\r\n    \"done\": false\r\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/items/4"
+      },
+      "response": []
+    },
+    {
+      "name": "Todo Items Delete",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01c3ae18-52d5-459b-b6ec-64e16e4d5640",
+            "exec": [""],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "id": "a7b4e70e-e00d-4f1b-abf9-798e79aef003",
+      "request": {
+        "auth": { "type": "bearer", "bearer": { "token": "{{token}}" } },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"listId\": 1,\r\n    \"itemId\": 1\r\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:7000/api/items/3"
+      },
+      "response": []
+    }
+  ]
+}
