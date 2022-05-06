@@ -8,6 +8,7 @@
 1. bcrypt
 1. ozzo-validation
 1. SQL
+1. Docker-compose
 
 ### FE
 
