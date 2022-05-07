@@ -20,7 +20,7 @@ func (h *Handler) getAllLists(c *gin.Context) {
 
 	todoLists, err := h.services.TodoList.GetAll(userId)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusInternalServerError, err))
+		responseWithError(c, models.NewInternalServerError(err.Error()))
 	}
 
 	c.JSON(http.StatusOK, todoLists)
@@ -45,18 +45,18 @@ func (h *Handler) createList(c *gin.Context) {
 
 	var input todoListInput
 	if err := c.BindJSON(&input); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	listId, err := h.services.TodoList.Create(userId, input.Title)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusInternalServerError, err))
+		responseWithError(c, models.NewInternalServerError(err.Error()))
 		return
 	}
 
@@ -72,13 +72,13 @@ func (h *Handler) getListById(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	todoList, err := h.services.TodoList.GetById(userId, id)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
@@ -94,24 +94,24 @@ func (h *Handler) updateList(c *gin.Context) {
 
 	listId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	var input models.UpdateTodoListInput
 	if err := c.BindJSON(&input); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 	input.Id = listId
 
 	if err := input.Validate(); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	if err := h.services.TodoList.Update(userId, input); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusInternalServerError, err))
+		responseWithError(c, models.NewInternalServerError(err.Error()))
 		return
 	}
 
@@ -127,12 +127,12 @@ func (h *Handler) deleteList(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	if err := h.services.TodoList.Delete(userId, id); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusInternalServerError, err))
+		responseWithError(c, models.NewInternalServerError(err.Error()))
 		return
 	}
 

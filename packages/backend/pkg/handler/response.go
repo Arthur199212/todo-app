@@ -15,7 +15,7 @@ type errorResponse struct {
 func responseWithError(c *gin.Context, err error) {
 	logrus.Errorln(err.Error())
 
-	if re, ok := err.(*models.RequestError); ok {
+	if re, ok := err.(*models.HttpError); ok {
 		c.AbortWithStatusJSON(re.Status, re.Error())
 		return
 	}

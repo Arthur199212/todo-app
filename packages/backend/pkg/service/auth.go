@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -28,13 +27,13 @@ func (s *AuthService) CreateUser(user models.User) (int, error) {
 	passwordHash, err := s.generatePasswordHash(user.Password)
 	if err != nil {
 		logrus.Errorln("CreateUser:", err)
-		return 0, models.NewRequestError(http.StatusInternalServerError, errors.New("password is not valid"))
+		return 0, models.NewInternalServerError("password is not valid")
 	}
 	user.Password = passwordHash
 
 	id, err := s.repo.CreateUser(user)
 	if err != nil {
-		return 0, models.NewRequestError(http.StatusInternalServerError, errors.New("could not create user"))
+		return 0, models.NewInternalServerError("could not create user")
 	}
 	return id, nil
 }
@@ -51,12 +50,12 @@ func (s *AuthService) GenerateToken(email, password string) (string, error) {
 	user, err := s.repo.GetUserByEmail(email)
 	if err != nil {
 		logrus.Errorln("GenerateToken:", err)
-		return "", models.NewRequestError(http.StatusBadRequest, errors.New("email or password are not correct"))
+		return "", models.NewBadRequestError("email or password are not correct")
 	}
 
 	if err := s.compareHashAndPassword(user.Password, password); err != nil {
 		logrus.Errorln("GenerateToken:", err)
-		return "", models.NewRequestError(http.StatusBadRequest, errors.New("email or password are not correct"))
+		return "", models.NewBadRequestError("email or password are not correct")
 	}
 
 	token, err := s.generateAccessToken(strconv.Itoa(user.Id))

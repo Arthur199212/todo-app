@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 	"todo-app/models"
@@ -19,7 +18,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 
 	listId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, errors.New("listId is invalid")))
+		responseWithError(c, models.NewBadRequestError("listId is invalid"))
 		return
 	}
 
@@ -28,7 +27,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 		validation.Min(0).Error("listId is invalid"),
 	)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
@@ -50,19 +49,19 @@ func (h *Handler) createItem(c *gin.Context) {
 
 	listId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, errors.New("listId is invalid")))
+		responseWithError(c, models.NewBadRequestError("listId is invalid"))
 		return
 	}
 
 	var input models.TodoItemInput
 	if err := c.BindJSON(&input); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 	input.ListId = listId
 
 	if err := input.Validate(); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
@@ -84,7 +83,7 @@ func (h *Handler) getItemById(c *gin.Context) {
 
 	itemId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
@@ -106,18 +105,18 @@ func (h *Handler) updateItem(c *gin.Context) {
 
 	itemId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	var input models.UpdateTodoItemInput
 	if err := c.BindJSON(&input); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
@@ -138,7 +137,7 @@ func (h *Handler) deleteItem(c *gin.Context) {
 
 	itemId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 

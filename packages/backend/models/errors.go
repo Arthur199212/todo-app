@@ -1,17 +1,36 @@
 package models
 
-type RequestError struct {
+import (
+	"errors"
+	"net/http"
+)
+
+type HttpError struct {
 	Status  int
 	Message error
 }
 
-func NewRequestError(status int, err error) *RequestError {
-	return &RequestError{
-		Status:  status,
-		Message: err,
+func (e HttpError) Error() string {
+	return e.Message.Error()
+}
+
+func NewBadRequestError(err string) *HttpError {
+	return &HttpError{
+		Status:  http.StatusBadRequest,
+		Message: errors.New(err),
 	}
 }
 
-func (e RequestError) Error() string {
-	return e.Message.Error()
+func NewUnauthorizedError(err string) *HttpError {
+	return &HttpError{
+		Status:  http.StatusUnauthorized,
+		Message: errors.New(err),
+	}
+}
+
+func NewInternalServerError(err string) *HttpError {
+	return &HttpError{
+		Status:  http.StatusInternalServerError,
+		Message: errors.New(err),
+	}
 }

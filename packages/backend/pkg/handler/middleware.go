@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"errors"
-	"net/http"
 	"strings"
 	"todo-app/models"
 
@@ -17,13 +15,13 @@ const (
 func (h *Handler) authRequired(c *gin.Context) {
 	header := strings.Split(c.GetHeader(authHeader), " ")
 	if len(header) != 2 {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, errors.New("not authorized")))
+		responseWithError(c, models.NewBadRequestError("not authorized"))
 		return
 	}
 	token := header[1]
 	userId, err := h.services.Authorization.ParseUserIdFromToken(token)
 	if err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
@@ -33,12 +31,12 @@ func (h *Handler) authRequired(c *gin.Context) {
 func getUserId(c *gin.Context) (int, error) {
 	userId, ok := c.Get(userCtx)
 	if !ok {
-		return 0, models.NewRequestError(http.StatusUnauthorized, errors.New("userId is invalid"))
+		return 0, models.NewUnauthorizedError("userId is invalid")
 	}
 
 	userIdInt, ok := userId.(int)
 	if !ok {
-		return 0, models.NewRequestError(http.StatusUnauthorized, errors.New("userId is invalid"))
+		return 0, models.NewUnauthorizedError("userId is invalid")
 	}
 
 	return userIdInt, nil

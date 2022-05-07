@@ -13,12 +13,12 @@ import (
 func (h *Handler) signUp(c *gin.Context) {
 	var input models.User
 	if err := c.BindJSON(&input); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
@@ -54,12 +54,12 @@ func (u signInInput) Validate() error {
 func (h *Handler) signIn(c *gin.Context) {
 	var input signInInput
 	if err := c.BindJSON(&input); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
 	if err := input.Validate(); err != nil {
-		responseWithError(c, models.NewRequestError(http.StatusBadRequest, err))
+		responseWithError(c, models.NewBadRequestError(err.Error()))
 		return
 	}
 
