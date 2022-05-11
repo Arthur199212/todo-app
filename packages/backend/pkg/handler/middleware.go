@@ -15,13 +15,19 @@ const (
 func (h *Handler) authRequired(c *gin.Context) {
 	header := strings.Split(c.GetHeader(authHeader), " ")
 	if len(header) != 2 {
-		responseWithError(c, models.NewBadRequestError("not authorized"))
+		responseWithError(c, models.NewUnauthorizedError("not authorized"))
 		return
 	}
+
+	if header[0] != "Bearer" || header[1] == "" {
+		responseWithError(c, models.NewUnauthorizedError("invalid auth header"))
+		return
+	}
+
 	token := header[1]
 	userId, err := h.services.Authorization.ParseUserIdFromToken(token)
 	if err != nil {
-		responseWithError(c, models.NewBadRequestError(err.Error()))
+		responseWithError(c, models.NewUnauthorizedError("invalid token"))
 		return
 	}
 
