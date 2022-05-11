@@ -16,9 +16,13 @@ func responseWithError(c *gin.Context, err error) {
 	logrus.Errorln(err.Error())
 
 	if re, ok := err.(*models.HttpError); ok {
-		c.AbortWithStatusJSON(re.Status, re.Error())
+		c.AbortWithStatusJSON(re.Status, map[string]interface{}{
+			"message": re.Error(),
+		})
 		return
 	}
 
-	c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+	c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+		"message": err.Error(),
+	})
 }
