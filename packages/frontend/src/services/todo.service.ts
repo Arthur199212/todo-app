@@ -11,16 +11,26 @@ instance.interceptors.request.use(function (config) {
   return config
 })
 
+const forceCleanUpAndPageReload = () => {
+  localStorage.removeItem(ACCESS_TOKEN_KEY)
+  setAccessToken(undefined)
+  window.location.reload()
+}
+
 instance.interceptors.response.use(undefined, function (err) {
+  if (err.response.status === 401) {
+    // todo: add refresh token logic
+    console.warn('Unauthorized')
+    forceCleanUpAndPageReload()
+  }
+
   if (
     err.response.status === 400 &&
     err.response.data.includes('token is expired')
   ) {
     // todo: add refresh token logic
     console.warn('Token is expired')
-    localStorage.removeItem(ACCESS_TOKEN_KEY)
-    setAccessToken(undefined)
-    window.location.reload()
+    forceCleanUpAndPageReload()
   }
   return Promise.reject(err)
 })
@@ -28,13 +38,13 @@ instance.interceptors.response.use(undefined, function (err) {
 export const createList = async (title: string): Promise<string> => {
   const {
     data: { id }
-  } = await instance.post('/lists/', { title })
+  } = await instance.post('/lists', { title })
   if (!id) throw new Error('createList: list was not created')
   return id
 }
 
 export const getAllLists = async () => {
-  const { data } = await instance.get('/lists/')
+  const { data } = await instance.get('/lists')
   if (!data) throw new Error('getAllLists: could not get todo lists')
   return data
 }
@@ -54,13 +64,13 @@ export const createItem = async ({
 }): Promise<string> => {
   const {
     data: { id }
-  } = await instance.post(`/lists/${listId}/items/`, { title })
+  } = await instance.post(`/lists/${listId}/items`, { title })
   if (!id) throw new Error('createItem: item was not created')
   return id
 }
 
 export const getAllItemsByListId = async (listId: string) => {
-  const { data } = await instance.get(`/lists/${listId}/items/`)
+  const { data } = await instance.get(`/lists/${listId}/items`)
   if (!data) throw new Error('getAllItemsByListId: could not get todo item')
   return data
 }
