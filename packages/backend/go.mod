@@ -3,7 +3,6 @@ module todo-app
 go 1.18
 
 require (
-	github.com/gin-contrib/cors v1.3.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/lib/pq v1.10.5
