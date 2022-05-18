@@ -11,14 +11,14 @@
 
 ### How to start
 
-1. Create docker volume
+1. If you start app for the first time, create docker volume
    `docker create volume pgdata`
 1. Spin up PostgreSQL DB in docker container
-   `npm run up`
-1. Build the code
-   `npm run build`
+   `make up`
+1. If you start app for the first time, run migrations
+   `make migrate`
 1. Start the server
-   `./bin/main.exe`
+   `make run`
 
 ### How to run migrations with [migrate](https://github.com/golang-migrate/migrate)
 
